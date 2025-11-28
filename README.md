@@ -64,7 +64,9 @@ Minimal recommended config:
         "-c", "curl -sSL https://conduit.design/install.sh | bash -s -- --run" // Path to auto-install
         "/path/to/project/" // Working directory
       ],
-      "channel": "unique-id" // Your unique channel ID
+      "env": {
+        "CHANNEL_KEY": "purple-owl-26", // Your unique channel ID
+      }
     }
   }
 }
