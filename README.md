@@ -1,2 +1,156 @@
-# conduit_design
-Public repo for conduit design
+# conduit.design
+
+Turns any LLM-powered agent into a first-class Figma collaborator: No more clicking through menus or manual adjustments. Just describe what you want, and watch it happen. [Watch the video](https://www.linkedin.com/posts/andr%C3%A9-j-1676a2169_launch-video-the-landing-page-goes-live-activity-7390030243383730176-WNnL)
+
+## Features
+
+- **Full Figma API access** — Batch transform complex designs with simple prompts  
+- **Instant AI editing** — Transform complex design hierarchies in seconds
+- **Code Export** — Generate production-ready code from design instantly  
+
+## Prerequisites
+
+Before installation, ensure you have:
+
+- **Figma Desktop App** (Free version or Paid)
+- **MCP-compatible application** (Cursor, VSCode, AntiGravity, etc.)
+
+## Quick Start
+
+### Step 1: Configure Your MCP Application
+
+Add to your MCP configuration file (`mcp_config.json` for Cursor/VSCode, platform-specific for others):   
+
+```json
+{
+  "mcpServers": {
+    "conduit": {
+      "command": "/bin/bash",
+      "args": ["-c", "curl -sSL https://conduit.design/install.sh | bash -s -- --run"]
+    }
+  }
+}
+```
+
+### Step 2: Auto-Install Figma Plugin
+
+1. **Start the MCP** once from your AI application (this auto-installs the plugin)
+2. **Open Figma Desktop** → `Plugins` → `Development` → `Import plugin from manifest`
+3. **Select**: `~/.conduit/figma-plugin/manifest.json`
+4. **Copy the channel ID** shown in the Figma plugin I.e:` "purple-owl-27"`
+
+### Step 3: Connect & Create
+
+```text
+User: Talk to Figma on channel "purple-owl-27"
+Agent: ✅ Connected to Figma on channel "purple-owl-27"
+
+User: Create a modern navigation bar with our brand color #3366FF
+Agent: ✅ Created navigation bar with brand color #3366FF
+```
+
+## Configuration
+
+### Basic Setup
+
+Minimal recommended config:
+
+```json
+{
+  "mcpServers": {
+    "conduit": {
+      "command": "/bin/bash",
+      "args": [
+        "-c", "curl -sSL https://conduit.design/install.sh | bash -s -- --run" // Path to auto-install
+        "/path/to/project/" // Working directory
+      ],
+      "channel": "unique-id" // Your unique channel ID
+    }
+  }
+}
+```
+
+### Advanced Setup to enable instant edit
+
+Enable AI-powered instant edits with provider configuration:
+
+```json
+{
+  "mcpServers": {
+    "conduit": {
+      "command": "...",
+      "args": ["..."],
+      "channel": "...",
+      "env": {
+        "AI_DEFAULT_PROVIDER": "openai",
+        "AI_DEFAULT_MODEL": "gpt-5-1",
+        "OPENAI_API_KEY": "sk-proj-...",
+        "AI_TEMPERATURE": "0.7",
+        "AI_MAX_TOKENS": "4096"
+      }
+    }
+  }
+}
+```
+
+### AI Provider Options
+
+| Provider | Models | Environment Key |
+|----------|--------|----------------|
+| **OpenAI** | `gpt-5-1`, `gpt-5-1-mini` | `OPENAI_API_KEY` |
+| **Anthropic** | `claude-sonnet-4-5`, `claude-opus-4-5` | `ANTHROPIC_API_KEY` |
+| **Google** | `gemini-3.0-pro`, `gemini-3.0-flash` | `GEMINI_API_KEY` |
+
+
+## Export Capabilities
+
+Conduit can export deploy-ready websites from WYSIWYG `{page-breakpoint-theme}` Figma frames:
+
+- **Responsive Design** (mobile, tablet, desktop breakpoints)  
+- **Automatic Theming** (dark & light mode themes)  
+- **Asset Export** (SVG, images with optimization)  
+- **CSS Tokens** (design system variables)  
+- **Complete Files** (HTML, CSS, assets)  
+- **Google Fonts** (automatic imports & optimization)  
+- **Multi-page** (full website exports)  
+- **Hyperlinks** (navigation & interactions)
+
+## Supported Applications
+
+| Application | Configuration Location | Status |
+|-------------|----------------------|--------|
+| [Cursor](https://cursor.com) | `~/.cursor/mcp_settings.json` | ✅ Stable |
+| [Google Antigravity](https://antigravity.google.com/) | Extension settings | ✅ Stable |
+| [VSCode](https://code.visualstudio.com) | `.vscode/mcp.json` | ✅ Stable |
+
+## Tool API:
+- Read and Write for Figma API (Single / Batch): `annotation, asset, autolayout, boolean, component, constraint, effect, grid, guide, group, node, page, property, selection, shape, style, text, transform, variant, variable`
+- Helper tools: `bulk, compare, describe, export, info, join, jsx`
+
+## File sandboxing:
+
+"Working directory" is what your AI agent app (Cursor / VSCode) advertise as allowed roots. Please avoid adding low-level directories to config, AI's might in rare cases overwrite files unintentionally. Ensure you backup your project files frequently. 
+
+1. Conduit can read files from your entire system
+2. Conduit can soft-write to your entire system (only create new files/folders)
+3. Conduit can safe-write to working directory / paths you set in config (overwrite existing files and everything soft-write can do)
+
+## Privacy acknowledgment
+
+Only data you activly work on is exposed to external services. See bellow how they are effected. 
+
+1. Conduit is an entirly local application and has no analytics and does not call any external service or server.
+2. Conduit uses (Cursor / VSCode) as your daily driver. If you trust them your good to go. Their EULA applies.
+3. Conduit connects to google-gemini, antrhropic, openAI api's if you use the "instant edit" feature. Their EULA applies.
+
+## Minor early access limitations:
+
+- Batch-mode for Instant AI edit is not ready, (workaround is to target parent) (fixing soon)
+- Instant AI edit works on most node types, but some complex node types are not supported (Instant AI edit will work in 95% of use cases, this will be resolved in the medium term) 
+- Instant AI edit does not work with multi level styles yet, use Turn by turn mode to use multi-style (fixing very soon)
+- Exports only html, css, jsx. (Tailwind, Vue, etc coming later, medium term)
+- Chaining mixed tool calls together (bulk) in one prompt is experimental, only some tools has support (this will be resolved in the medium term)
+
+---
+  
+© 2025 [conduit.design](https://conduit.design/)  - All rights reserved.  
