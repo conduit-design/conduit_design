@@ -87,7 +87,11 @@ jobs:
         run: |
           set -euo pipefail
 
-          if git diff --quiet; then
+          # Stage files first so we also detect newly created files
+          git add meta/github-release-downloads.json meta/github-release-downloads-history.json meta/github-release-downloads-weekly.json
+
+          # If there are no staged changes, exit early
+          if git diff --cached --quiet; then
             echo "No changes to commit."
             exit 0
           fi
@@ -95,6 +99,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git add meta/github-release-downloads.json meta/github-release-downloads-history.json meta/github-release-downloads-weekly.json
           git commit -m "chore: update GitHub release downloads badge" || exit 0
           git push
