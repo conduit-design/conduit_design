@@ -86,6 +86,33 @@ Key env vars:
   - You can point this at any directories on your system (for example `/Users/you/.conduit-workspace`, `/Users/you/assets`, `/Users/you/Desktop/experiments`).
   - Be cautious when adding broad paths (e.g. `~/` or `/`); anything listed here becomes writable by Conduit.
 
+### Windows MCP config (PowerShell example)
+
+On Windows, you can configure Conduit using the same env-only contract, but invoke it via PowerShell instead of `/bin/bash`. A conceptual MCP config looks like:
+
+```json
+{
+  "mcpServers": {
+    "conduit": {
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-Command",
+        "iwr https://conduit.design/install.ps1 -UseBasicParsing | iex"
+      ],
+      "env": {
+        "CHANNEL_KEY": "purple-owl-26",
+        "PORT": "3055",
+        "PROJECT_ROOT": "C:\\Users\\you\\.conduit-workspace",
+        "ALLOWED_ROOTS": "C:\\Users\\you\\.conduit-workspace|C:\\Users\\you\\assets|C:\\Users\\you\\Desktop\\experiments"
+      }
+    }
+  }
+}
+```
+
+This uses the same env keys described above; only the `command`/`args` change to a PowerShell-based installer/launcher. Your MCP host is responsible for passing the `env` block through to the PowerShell process, where it is available as `$env:CHANNEL_KEY`, `$env:PORT`, etc.
+
 ### Advanced: enable instant edit
 
 To turn on AI-powered instant edits, add your provider keys and defaults to the same `env` block:
@@ -123,7 +150,6 @@ To turn on AI-powered instant edits, add your provider keys and defaults to the 
 | **OpenAI** | `gpt-5-1`, `gpt-5-1-mini` | `OPENAI_API_KEY` |
 | **Anthropic** | `claude-sonnet-4-5`, `claude-opus-4-5` | `ANTHROPIC_API_KEY` |
 | **Google** | `gemini-3.0-pro`, `gemini-3.0-flash` | `GEMINI_API_KEY` |
-
 
 ## Export Capabilities
 
