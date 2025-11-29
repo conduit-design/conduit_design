@@ -14,11 +14,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Create meta directory
+        run: mkdir -p meta
+
       - name: Calculate total release asset downloads
         id: calc
         env:
           OWNER: conduit-design
           REPO: conduit_design
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
 
