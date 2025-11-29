@@ -17,7 +17,7 @@ jobs:
       - name: Create meta directory
         run: mkdir -p meta
 
-      - name: Calculate total release asset downloads
+      - name: Calculate total and weekly release asset downloads
         id: calc
         env:
           OWNER: conduit-design
@@ -30,14 +30,55 @@ jobs:
           total=$(gh api repos/${OWNER}/${REPO}/releases --paginate \
             --jq 'map(.assets // [] | map(.download_count // 0) | add) | add // 0')
 
-          echo "Total downloads: ${total}"
+          echo "Total downloads (all time): ${total}"
 
-          # Write Shields.io endpoint JSON for use with shields.io endpoint badge
+          # Write Shields.io endpoint JSON for total downloads
           cat > meta/github-release-downloads.json <<EOF
           {
             "schemaVersion": 1,
             "label": "downloads",
             "message": "${total}",
+            "color": "blue"
+          }
+          EOF
+
+          # Maintain history of daily totals
+          history_file="meta/github-release-downloads-history.json"
+          today=$(date -u +%F)
+
+          if [ -f "${history_file}" ]; then
+            history=$(cat "${history_file}")
+          else
+            history="[]"
+          fi
+
+          # Upsert today's entry and sort by date
+          updated_history=$(jq --arg date "${today}" --argjson total "${total}" '
+            map(select(.date != $date)) + [{ "date": $date, "total": $total }] |
+            sort_by(.date)
+          ' <<< "${history}")
+
+          printf '%s\n' "${updated_history}" > "${history_file}"
+
+          # Compute downloads over the last 7 days (or since first record if < 7 days)
+          weekly=$(jq '
+            to_entries as $e
+            | ($e | length) as $len
+            | if $len == 0 then 0 else
+                ($e[$len-1].value.total) as $latest |
+                (if $len > 7 then $e[$len-1-7].value.total else $e[0].value.total end) as $base |
+                ($latest - $base)
+              end
+          ' "${history_file}")
+
+          echo "Downloads last 7 days (approx): ${weekly}"
+
+          # Write Shields.io endpoint JSON for weekly downloads
+          cat > meta/github-release-downloads-weekly.json <<EOF
+          {
+            "schemaVersion": 1,
+            "label": "downloads (7d)",
+            "message": "${weekly}",
             "color": "blue"
           }
           EOF
@@ -54,6 +95,6 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git add meta/github-release-downloads.json
+          git add meta/github-release-downloads.json meta/github-release-downloads-history.json meta/github-release-downloads-weekly.json
           git commit -m "chore: update GitHub release downloads badge" || exit 0
           git push
