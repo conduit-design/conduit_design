@@ -36,7 +36,7 @@ jobs:
           cat > meta/github-release-downloads.json <<EOF
           {
             "schemaVersion": 1,
-            "label": "downloads",
+            "label": "Total downloads",
             "message": "${total}",
             "color": "blue"
           }
