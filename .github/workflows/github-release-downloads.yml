@@ -60,14 +60,21 @@ jobs:
 
           printf '%s\n' "${updated_history}" > "${history_file}"
 
-          # Compute downloads over the last 7 days (or since first record if < 7 days)
+          # Compute downloads over the last 7 days (inclusive), by summing daily deltas
           weekly=$(jq '
-            to_entries as $e
-            | ($e | length) as $len
+            map(.total) as $t
+            | ($t | length) as $len
             | if $len == 0 then 0 else
-                ($e[$len-1].value.total) as $latest |
-                (if $len > 7 then $e[$len-1-7].value.total else $e[0].value.total end) as $base |
-                ($latest - $base)
+                # Per-day downloads = diff between consecutive totals (first day = first total)
+                [ range(0; $len)
+                  | if . == 0 then $t[0] else ($t[.] - $t[.-1]) end
+                ] as $deltas
+                | ($deltas | length) as $dlen
+                # Take the last up-to-7 days and sum them
+                | ($deltas
+                    | if $dlen <= 7 then . else .[($dlen-7):] end
+                  )
+                | add
               end
           ' "${history_file}")
 
