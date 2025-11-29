@@ -1,0 +1,55 @@
+name: Update GitHub release download badge
+
+on:
+  schedule:
+    - cron: "0 0 * * *" # daily at 00:00 UTC
+  workflow_dispatch: {}
+
+jobs:
+  update-release-downloads:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Calculate total release asset downloads
+        id: calc
+        env:
+          OWNER: conduit-design
+          REPO: conduit_design
+        run: |
+          set -euo pipefail
+
+          # Fetch all releases and sum asset download_count using gh CLI (handles pagination)
+          total=$(gh api repos/${OWNER}/${REPO}/releases --paginate \
+            --jq 'map(.assets // [] | map(.download_count // 0) | add) | add // 0')
+
+          echo "Total downloads: ${total}"
+
+          # Write Shields.io endpoint JSON for use with shields.io endpoint badge
+          cat > meta/github-release-downloads.json <<EOF
+          {
+            "schemaVersion": 1,
+            "label": "downloads",
+            "message": "${total}",
+            "color": "blue"
+          }
+          EOF
+
+      - name: Commit and push if changed
+        run: |
+          set -euo pipefail
+
+          if git diff --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add meta/github-release-downloads.json
+          git commit -m "chore: update GitHub release downloads badge" || exit 0
+          git push

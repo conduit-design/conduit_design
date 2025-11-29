@@ -1,5 +1,7 @@
 # conduit.design
 
+[![GitHub release downloads](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/conduit-design/conduit_design/main/meta/github-release-downloads.json)](https://github.com/conduit-design/conduit_design/releases)
+
 Turns any LLM-powered agent into a first-class Figma collaborator: No more clicking through menus or manual adjustments. Just describe what you want, and watch it happen. [Watch the video](https://www.linkedin.com/posts/andr%C3%A9-j-1676a2169_launch-video-the-landing-page-goes-live-activity-7390030243383730176-WNnL)
 
 ## Features
