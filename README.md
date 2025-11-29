@@ -37,7 +37,7 @@ Add to your MCP configuration file (`mcp_config.json` for Cursor/VSCode, platfor
 1. **Start the MCP** once from your AI application (this auto-installs the plugin)
 2. **Open Figma Desktop** → `Plugins` → `Development` → `Import plugin from manifest`
 3. **Select**: `~/.conduit/figma-plugin/manifest.json`
-4. **Copy the channel ID** shown in the Figma plugin I.e:` "purple-owl-27"`
+4. **Copy the channel ID** shown in the Figma plugin i.e. `"purple-owl-27"`
 
 ### Step 3: Connect & Create
 
@@ -51,9 +51,11 @@ Agent: ✅ Created navigation bar with brand color #3366FF
 
 ## Configuration
 
-### Custom config
+Conduit is configured via environment variables in your MCP configuration. You do **not** need to pass ports or paths as CLI arguments to the install script – the one-line installer inherits whatever env you define here.
 
-- Port: Running multiple conduit plugins requires using different ports
+### Basic MCP config (recommended)
+
+Minimal recommended setup:
 
 ```json
 {
@@ -61,30 +63,48 @@ Agent: ✅ Created navigation bar with brand color #3366FF
     "conduit": {
       "command": "/bin/bash",
       "args": [
-        "-c", "curl -sSL https://conduit.design/install.sh | bash -s -- --run", // Path to auto-install
-        "/path/to/project/", // Working directory
-        "--port=4080" // Custom port 
+        "-c",
+        "curl -sSL https://conduit.design/install.sh | bash -s -- --run"
       ],
       "env": {
-        "CHANNEL_KEY": "purple-owl-26", // Your unique channel ID
+        "CHANNEL_KEY": "purple-owl-26",
+        "PORT": "3055",
+        "PROJECT_ROOT": "/Users/you/.conduit-workspace",
+        "ALLOWED_ROOTS": "/Users/you/.conduit-workspace|/Users/you/assets|/Users/you/Desktop/experiments"
       }
     }
   }
 }
 ```
 
-### Advanced Setup to enable instant edit
+Key env vars:
 
-Enable AI-powered instant edits with provider configuration:
+- `CHANNEL_KEY` – permanent channel id used to pair the MCP server with the Figma plugin.
+- `PORT` – WebSocket port the plugin connects to (default `3055`).
+- `PROJECT_ROOT` – directory Conduit uses for its own logs and temp files (for example `/Users/you/.conduit-workspace`). This does **not** limit where `ALLOWED_ROOTS` can point.
+- `ALLOWED_ROOTS` – `|`-delimited list of absolute directories Conduit is allowed to treat as safe-write roots (where overwrites are allowed).
+  - You can point this at any directories on your system (for example `/Users/you/.conduit-workspace`, `/Users/you/assets`, `/Users/you/Desktop/experiments`).
+  - Be cautious when adding broad paths (e.g. `~/` or `/`); anything listed here becomes writable by Conduit.
+
+### Advanced: enable instant edit
+
+To turn on AI-powered instant edits, add your provider keys and defaults to the same `env` block:
 
 ```json
 {
   "mcpServers": {
     "conduit": {
-      "command": "...",
-      "args": ["..."],
-      "channel": "...",
+      "command": "/bin/bash",
+      "args": [
+        "-c",
+        "curl -sSL https://conduit.design/install.sh | bash -s -- --run"
+      ],
       "env": {
+        "CHANNEL_KEY": "purple-owl-26",
+        "PORT": "3055",
+        "PROJECT_ROOT": "/path/to/project",
+        "ALLOWED_ROOTS": "/path/to/project|/path/to/project/temp_files|/path/to/project/_logs",
+
         "AI_DEFAULT_PROVIDER": "openai",
         "AI_DEFAULT_MODEL": "gpt-5-1",
         "OPENAI_API_KEY": "sk-proj-...",
@@ -167,4 +187,4 @@ Only data you activly work on is exposed to external services. See bellow how th
 
 ---
   
-© 2025 [conduit.design](https://conduit.design/)  - All rights reserved.  
+© 2025 [conduit.design](https://conduit.design/)  - All rights reserved.
