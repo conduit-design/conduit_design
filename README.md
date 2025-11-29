@@ -176,14 +176,13 @@ Conduit can export deploy-ready websites from WYSIWYG `{page-breakpoint-theme}` 
 
 ## Supported Platforms
 
-Conduit currently supports the following operating systems via the one-line installer:
+Conduit currently supports the following operating systems via its one-line installers and prebuilt binaries:
 
 - **macOS (Apple Silicon / arm64)**
 - **macOS (Intel / x64)**
 - **Linux (x64)**
 - **Linux (arm64)**
-
-> Note: Windows support is planned for a future update. For now, the official installer targets macOS and Linux only.
+- **Windows (x64)**
 
 ## Tool API:
 - Read and Write for Figma API (Single / Batch): `annotation, asset, autolayout, boolean, component, constraint, effect, grid, guide, group, node, page, property, selection, shape, style, text, transform, variant, variable`
