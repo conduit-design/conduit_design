@@ -181,7 +181,6 @@ Conduit currently supports the following operating systems via its one-line inst
 - **Linux (x64)**
 - **Linux (arm64)**
 - **Windows (x64)**
-- **Windows (ARM64)**
 
 ## Tool API:
 - Read and Write for Figma API (Single / Batch): `annotation, asset, autolayout, boolean, component, constraint, effect, grid, guide, group, node, page, property, selection, shape, style, text, transform, variant, variable`
