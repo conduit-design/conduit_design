@@ -51,9 +51,9 @@ Agent: ✅ Created navigation bar with brand color #3366FF
 
 ## Configuration
 
-### Basic Setup
+### Custom config
 
-Minimal recommended config:
+- Port: Running multiple conduit plugins requires using different ports
 
 ```json
 {
@@ -61,8 +61,9 @@ Minimal recommended config:
     "conduit": {
       "command": "/bin/bash",
       "args": [
-        "-c", "curl -sSL https://conduit.design/install.sh | bash -s -- --run" // Path to auto-install
-        "/path/to/project/" // Working directory
+        "-c", "curl -sSL https://conduit.design/install.sh | bash -s -- --run", // Path to auto-install
+        "/path/to/project/", // Working directory
+        "--port=4080" // Custom port 
       ],
       "env": {
         "CHANNEL_KEY": "purple-owl-26", // Your unique channel ID
@@ -124,6 +125,17 @@ Conduit can export deploy-ready websites from WYSIWYG `{page-breakpoint-theme}` 
 | [Cursor](https://cursor.com) | `~/.cursor/mcp_settings.json` | ✅ Stable |
 | [Google Antigravity](https://antigravity.google.com/) | Extension settings | ✅ Stable |
 | [VSCode](https://code.visualstudio.com) | `.vscode/mcp.json` | ✅ Stable |
+
+## Supported Platforms
+
+Conduit currently supports the following operating systems via the one-line installer:
+
+- **macOS (Apple Silicon / arm64)**
+- **macOS (Intel / x64)**
+- **Linux (x64)**
+- **Linux (arm64)**
+
+> Note: Windows support is planned for a future update. For now, the official installer targets macOS and Linux only.
 
 ## Tool API:
 - Read and Write for Figma API (Single / Batch): `annotation, asset, autolayout, boolean, component, constraint, effect, grid, guide, group, node, page, property, selection, shape, style, text, transform, variant, variable`
