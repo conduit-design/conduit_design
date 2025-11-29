@@ -1,0 +1,29 @@
+name: Release download stats
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Once per day at 02:00 UTC
+    - cron: "0 2 * * *"
+
+permissions:
+  contents: read
+
+jobs:
+  release-download-stats:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Show release download stats
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "## Release download stats for $GITHUB_REPOSITORY" >> "$GITHUB_STEP_SUMMARY"
+
+          total=$(gh api "repos/$GITHUB_REPOSITORY/releases" --paginate --jq 'map(.assets | map(.download_count) | add // 0) | add // 0')
+          echo "Total downloads across all releases: **$total**" >> "$GITHUB_STEP_SUMMARY"
+
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "### Per release" >> "$GITHUB_STEP_SUMMARY"
+
+          gh api "repos/$GITHUB_REPOSITORY/releases" --paginate --jq '.[] | {tag: .tag_name, downloads: (.assets | map(.download_count) | add // 0)}' \
+            | jq -r '"- \(.tag): \(.downloads) downloads"' >> "$GITHUB_STEP_SUMMARY"
