@@ -88,7 +88,7 @@ To customize Conduit's behavior, add environment variables to your MCP configura
     }
   }
 }
-
+```
 
 ### Environment Variables Reference
 
