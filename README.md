@@ -98,7 +98,7 @@ To customize Conduit's behavior, add environment variables to your MCP configura
 | `CHANNEL_KEY` | Permanent channel ID to pair the MCP server with the Figma plugin. Copy from the Conduit plugin UI. | Auto-generated | `purple-owl-26` |
 | `PORT` | WebSocket port the plugin connects to. | `3055` | `3055` |
 | `PROJECT_ROOT` | Directory for Conduit's logs and temp files. Many MCP hosts default this to your workspace; some require explicit configuration. | Workspace root | `/Users/John/my-project` |
-| `ALLOWED_ROOTS` | Pipe-delimited (`|`) list of absolute directories where Conduit can overwrite existing files. Be cautious with broad paths like `~/` or `/`. | None | `/Users/John/my-project|/Users/John/experiments` |
+| `ALLOWED_ROOTS` | Pipe-delimited (`\|`) list of absolute directories where Conduit can overwrite existing files. Be cautious with broad paths like `~/` or `/`. | None | `/Users/John/my-project\|/Users/John/experiments` |
 
 **Important Notes:**
 - `PROJECT_ROOT` does **not** limit where `ALLOWED_ROOTS` can point—they are independent.
