@@ -98,7 +98,7 @@ To customize Conduit's behavior, add environment variables to your MCP configura
 | `CHANNEL_KEY` | Permanent channel ID to pair the MCP server with the Figma plugin. Copy from the Conduit plugin UI. | Auto-generated | `purple-owl-26` |
 | `PORT` | WebSocket port the plugin connects to. | `3055` | `3055` |
 | `PROJECT_ROOT` | Directory for Conduit's logs and temp files. Many MCP hosts default this to your workspace; some require explicit configuration. | Workspace root | `/Users/John/my-project` |
-| `ALLOWED_ROOTS` | Pipe-delimited (`|`) list of absolute directories where Conduit can overwrite existing files. Be cautious with broad paths like `~/` or `/`. | None | `/Users/John/my-project\|/Users/John/experiments` |
+| `ALLOWED_ROOTS` | Pipe-delimited (`|`) list of absolute directories where Conduit can overwrite existing files. Be cautious with broad paths like `~/` or `/`. | None | `/Users/John/my-project|/Users/John/experiments` |
 
 **Important Notes:**
 - `PROJECT_ROOT` does **not** limit where `ALLOWED_ROOTS` can point—they are independent.
@@ -220,7 +220,7 @@ Conduit exposes the following tools to LLM agents:
 
 ### Design Operation Tools
 
-Most tools have read/write and single/batch mode build in.
+Most tools have read/write and single/batch mode built in.
 
 | Tool | Description |
 |------|-------------|
@@ -259,9 +259,9 @@ Most tools have read/write and single/batch mode build in.
 | `jsx` | Get, set, or edit JSX representations of Figma nodes. |
 
 
-## File sandboxing:
+## File Sandboxing:
 
-"Working directory" is what your AI agent app (Cursor / VSCode) advertise as allowed roots. Please avoid adding low-level directories to config, AI's might in rare cases overwrite files unintentionally. Ensure you backup your project files frequently. 
+"Working directory" is what your AI agent app (Cursor / VSCode) advertises as allowed roots. Please avoid adding low-level directories to config, AIs might in rare cases overwrite files unintentionally. Ensure you backup your project files frequently. 
 
 1. **Read Access** — Conduit can read files from your entire system.
 2. **Soft-Write Access** — Conduit can create new files and folders anywhere on your system but **cannot overwrite** existing files.
@@ -278,11 +278,11 @@ Most tools have read/write and single/batch mode build in.
 
 ## Privacy & Data Usage
 
-Only data you activly work on is exposed to external services. See bellow regarding what gets exposed
+Only data you actively work on is exposed to external services. See below regarding what gets exposed.
 
-1. Conduit is an entirly local application and has no analytics and does not call any external service or server.
-2. Conduit uses (Cursor / VSCode) as your daily driver. If you trust them your good to go. Their EULA applies.
-3. Conduit connects to google-gemini, antrhropic, openAI api's if you use the "instant edit" feature. Their EULA applies.
+1. Conduit is an entirely local application and has no analytics and does not call any external service or server.
+2. Conduit uses (Cursor / VSCode) as your daily driver. If you trust them you're good to go. Their EULA applies.
+3. Conduit connects to google-gemini, Anthropic, openAI APIs if you use the "instant edit" feature. Their EULA applies.
 
 ## Auto-Updates
 
@@ -302,7 +302,7 @@ Conduit automatically updates both the **MCP server** and the **Figma plugin** w
 **Issue**: The Figma plugin shows "Disconnected" or fails to pair with the MCP server.
 
 **Solution**:
-1. Verify the `CHANNEL_KEY` in your MCP configuration matches the channel ID shown in the Figma plugin UI. (This step is otional, you can also just give channel_key to the AI when joining)
+1. Verify the `CHANNEL_KEY` in your MCP configuration matches the channel ID shown in the Figma plugin UI. (This step is optional, you can also just give channel_key to the AI when joining)
 2. Ensure the `PORT` is not blocked by a firewall or already in use.
 3. Restart both your MCP application and the Figma desktop app.
 
