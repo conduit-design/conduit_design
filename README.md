@@ -203,14 +203,6 @@ Conduit can export production-ready websites from Figma frames using the `{page-
 | [Google Antigravity](https://antigravity.google.com/) | Extension settings | ✅ Stable |
 | [VSCode](https://code.visualstudio.com) | `.vscode/mcp.json` | ✅ Stable |
 
-## Supported Applications
-
-| Application | Configuration Location | Status |
-|-------------|----------------------|--------|
-| [Cursor](https://cursor.com) | `~/.cursor/mcp_settings.json` | ✅ Stable |
-| [Google Antigravity](https://antigravity.google.com/) | Extension settings | ✅ Stable |
-| [VSCode](https://code.visualstudio.com) | `.vscode/mcp.json` | ✅ Stable |
-
 ## Supported Platforms
 
 Conduit supports the following operating systems with one-line installers and prebuilt binaries:
