@@ -2,7 +2,7 @@ name: Update GitHub release download badge
 
 on:
   schedule:
-    - cron: "0 0 * * *" # daily at 00:00 UTC
+    - cron: "0 */4 * * *" # every 4 hours at minute 0 UTC
   workflow_dispatch: {}
 
 jobs:
