@@ -64,7 +64,8 @@ You're good to go! The AI can now read, modify, and create Figma designs.
 
 ## Configuration
 
-> ⚠️ **Security Notice**: Conduit requires file system access. Only add trusted directories to `ALLOWED_ROOTS`. Always back up your projects before granting write permissions.
+> [!WARNING]
+> **Security Notice**: Conduit requires file system access. Only add trusted directories to `ALLOWED_ROOTS`. Always back up your projects before granting write permissions.
 
 ### Basic Configuration
 
@@ -99,9 +100,9 @@ To customize Conduit's behavior, add environment variables to your MCP configura
 | `PROJECT_ROOT` | Directory for Conduit's logs and temp files. Many MCP hosts default this to your workspace; some require explicit configuration. | Workspace root | `/Users/John/my-project` |
 | `ALLOWED_ROOTS` | Pipe-delimited (`|`) list of absolute directories where Conduit can overwrite existing files. Be cautious with broad paths like `~/` or `/`. | None | `/Users/John/my-project\|/Users/John/experiments` |
 
-**Important Notes:**
-- `PROJECT_ROOT` does **not** limit where `ALLOWED_ROOTS` can point—they are independent.
-- Only directories listed in `ALLOWED_ROOTS` allow file overwrites. All other locations are read-only or create-only.
+> [!IMPORTANT]
+> - `PROJECT_ROOT` does **not** limit where `ALLOWED_ROOTS` can point—they are independent.
+> - Only directories listed in `ALLOWED_ROOTS` allow file overwrites. All other locations are read-only or create-only.
 
 ### Windows Configuration
 
@@ -128,7 +129,8 @@ On Windows, use Windows-style paths and PowerShell syntax. Example:
 }
 ```
 
-> **Note**: Use double backslashes (`\\`) in JSON for Windows paths. At runtime, these become standard Windows paths like `C:\Users\John\...`.
+> [!NOTE]
+> Use double backslashes (`\\`) in JSON for Windows paths. At runtime, these become standard Windows paths like `C:\Users\John\...`.
 
 ### Instant AI edit Integration (Optional)
 
@@ -201,14 +203,6 @@ Conduit can export production-ready websites from Figma frames using the `{page-
 | [Google Antigravity](https://antigravity.google.com/) | Extension settings | ✅ Stable |
 | [VSCode](https://code.visualstudio.com) | `.vscode/mcp.json` | ✅ Stable |
 
-## Supported Applications
-
-| Application | Configuration Location | Status |
-|-------------|----------------------|--------|
-| [Cursor](https://cursor.com) | `~/.cursor/mcp_settings.json` | ✅ Stable |
-| [Google Antigravity](https://antigravity.google.com/) | Extension settings | ✅ Stable |
-| [VSCode](https://code.visualstudio.com) | `.vscode/mcp.json` | ✅ Stable |
-
 ## Supported Platforms
 
 Conduit supports the following operating systems with one-line installers and prebuilt binaries:
@@ -267,7 +261,8 @@ Most tools have read/write and single/batch mode build in.
 
 ## File sandboxing:
 
-"Working directory" is what your AI agent app (Cursor / VSCode) advertise as allowed roots. Please avoid adding low-level directories to config, AI's might in rare cases overwrite files unintentionally. Ensure you backup your project files frequently. 
+> [!CAUTION]
+> "Working directory" is what your AI agent app (Cursor / VSCode) advertise as allowed roots. Please avoid adding low-level directories to config, AI's might in rare cases overwrite files unintentionally. Ensure you backup your project files frequently.
 
 1. **Read Access** — Conduit can read files from your entire system.
 2. **Soft-Write Access** — Conduit can create new files and folders anywhere on your system but **cannot overwrite** existing files.
@@ -275,7 +270,8 @@ Most tools have read/write and single/batch mode build in.
 
 ### Security Best Practices
 
-> ⚠️ **Warning**: Only add trusted directories to `ALLOWED_ROOTS`. Avoid broad paths like `~/` or `/` that grant write access to sensitive system or user files.
+> [!WARNING]
+> Only add trusted directories to `ALLOWED_ROOTS`. Avoid broad paths like `~/` or `/` that grant write access to sensitive system or user files.
 
 - **Limit `ALLOWED_ROOTS`** to project-specific directories (e.g., `/Users/John/my-project`).
 - **Back up your projects** regularly before granting write permissions.
@@ -283,11 +279,12 @@ Most tools have read/write and single/batch mode build in.
 
 ## Privacy & Data Usage
 
-Only data you activly work on is exposed to external services. See bellow regarding what gets exposed
+> [!NOTE]
+> Only data you actively work on is exposed to external services. See below regarding what gets exposed.
 
-1. Conduit is an entirly local application and has no analytics and does not call any external service or server.
+1. Conduit is an entirely local application and has no analytics and does not call any external service or server.
 2. Conduit uses (Cursor / VSCode) as your daily driver. If you trust them your good to go. Their EULA applies.
-3. Conduit connects to google-gemini, antrhropic, openAI api's if you use the "instant edit" feature. Their EULA applies.
+3. Conduit connects to google-gemini, anthropic, openAI api's if you use the "instant edit" feature. Their EULA applies.
 
 ## Auto-Updates
 
@@ -306,40 +303,45 @@ Conduit automatically updates both the **MCP server** and the **Figma plugin** w
 
 **Issue**: The Figma plugin shows "Disconnected" or fails to pair with the MCP server.
 
-**Solution**:
-1. Verify the `CHANNEL_KEY` in your MCP configuration matches the channel ID shown in the Figma plugin UI. (This step is otional, you can also just give channel_key to the AI when joining)
-2. Ensure the `PORT` is not blocked by a firewall or already in use.
-3. Restart both your MCP application and the Figma desktop app.
+> [!TIP]
+> **Solution**:
+> 1. Verify the `CHANNEL_KEY` in your MCP configuration matches the channel ID shown in the Figma plugin UI. (This step is optional, you can also just give channel_key to the AI when joining)
+> 2. Ensure the `PORT` is not blocked by a firewall or already in use.
+> 3. Restart both your MCP application and the Figma desktop app.
 
 ### File Write Errors
 
 **Issue**: Conduit fails to write or overwrite files.
 
-**Solution**:
-1. Check that the target directory is listed in `ALLOWED_ROOTS`.
-2. Verify the path uses absolute paths (e.g., `/Users/John/my-project`, not `~/my-project`).
-3. Ensure you have file system permissions for the target directory.
+> [!TIP]
+> **Solution**:
+> 1. Check that the target directory is listed in `ALLOWED_ROOTS`.
+> 2. Verify the path uses absolute paths (e.g., `/Users/John/my-project`, not `~/my-project`).
+> 3. Ensure you have file system permissions for the target directory.
 
 ### Plugin Import Issues
 
 **Issue**: Cannot import the Figma plugin via `Plugins` → `Development` → `Import plugin from manifest…`.
 
-**Solution**:
-1. **Ensure you're using Figma Desktop** — Plugin import is not available in the browser version.
-2. Verify the manifest file exists at `~/.conduit/figma-plugin/manifest.json`.
-3. If the file is missing, restart your MCP application to trigger the auto-download.
+> [!TIP]
+> **Solution**:
+> 1. **Ensure you're using Figma Desktop** — Plugin import is not available in the browser version.
+> 2. Verify the manifest file exists at `~/.conduit/figma-plugin/manifest.json`.
+> 3. If the file is missing, restart your MCP application to trigger the auto-download.
 
 ### AI Instant Edit Not Working
 
 **Issue**: AI-powered instant edits fail or are unavailable.
 
-**Solution**:
-1. Verify you've added the appropriate API key (e.g., `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GEMINI_API_KEY`) to your MCP configuration.
-2. Check that `AI_DEFAULT_PROVIDER` and `AI_DEFAULT_MODEL` are set correctly.
-3. Ensure your API key is valid and has sufficient quota.
+> [!TIP]
+> **Solution**:
+> 1. Verify you've added the appropriate API key (e.g., `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GEMINI_API_KEY`) to your MCP configuration.
+> 2. Check that `AI_DEFAULT_PROVIDER` and `AI_DEFAULT_MODEL` are set correctly.
+> 3. Ensure your API key is valid and has sufficient quota.
 
 ## Limitations
 
+> [!NOTE]
 > **Early Access Notice**: Conduit is under active development. The following limitations are being actively addressed:
 
 - **Instant AI Edit**: Batch-mode not yet available (workaround: target parent nodes directly).
