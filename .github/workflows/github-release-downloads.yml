@@ -38,7 +38,7 @@ jobs:
             "schemaVersion": 1,
             "label": "Total downloads",
             "message": "${total}",
-            "color": "blue"
+            "color": "#a855f7"
           }
           EOF
 
@@ -84,9 +84,37 @@ jobs:
           cat > meta/github-release-downloads-weekly.json <<EOF
           {
             "schemaVersion": 1,
-            "label": "downloads (7d)",
+            "label": "Downloads (7d)",
             "message": "${weekly}",
-            "color": "blue"
+            "color": "#a855f7"
+          }
+          EOF
+
+          # Compute downloads over the last 30 days (inclusive), by summing daily deltas
+          thirty=$(jq '
+            map(.total) as $t
+            | ($t | length) as $len
+            | if $len == 0 then 0 else
+                [ range(0; $len)
+                  | if . == 0 then $t[0] else ($t[.] - $t[.-1]) end
+                ] as $deltas
+                | ($deltas | length) as $dlen
+                | ($deltas
+                    | if $dlen <= 30 then . else .[($dlen-30):] end
+                  )
+                | add
+              end
+          ' "${history_file}")
+
+          echo "Downloads last 30 days (approx): ${thirty}"
+
+          # Write Shields.io endpoint JSON for 30-day downloads
+          cat > meta/github-release-downloads-30d.json <<EOF
+          {
+            "schemaVersion": 1,
+            "label": "Downloads (30d)",
+            "message": "${thirty}",
+            "color": "#a855f7"
           }
           EOF
 
@@ -95,7 +123,7 @@ jobs:
           set -euo pipefail
 
           # Stage files first so we also detect newly created files
-          git add meta/github-release-downloads.json meta/github-release-downloads-history.json meta/github-release-downloads-weekly.json
+          git add meta/github-release-downloads.json meta/github-release-downloads-history.json meta/github-release-downloads-weekly.json meta/github-release-downloads-30d.json
 
           # If there are no staged changes, exit early
           if git diff --cached --quiet; then
