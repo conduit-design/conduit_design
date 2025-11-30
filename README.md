@@ -8,8 +8,9 @@
 [![Latest release](https://img.shields.io/github/v/release/conduit-design/conduit_design?sort=semver)](https://github.com/conduit-design/conduit_design/releases)
 
 
-Turns any LLM-powered agent into a first-class Figma collaborator: No more clicking through menus or manual adjustments. Just describe what you want, and watch it happen. [Watch the video](https://www.linkedin.com/posts/andr%C3%A9-j-1676a2169_launch-video-the-landing-page-goes-live-activity-7390030243383730176-WNnL)
+Turn any LLM-powered agent into a first-class Figma collaborator. No more clicking through menus or manual adjustments. Just describe what you want, and watch it happen. 
 
+**[Watch the Demo →](https://www.linkedin.com/posts/andr%C3%A9-j-1676a2169_launch-video-the-landing-page-goes-live-activity-7390030243383730176-WNnL)**
 ## Features
 
 - **Full Figma API access** — Batch transform complex designs with simple prompts  
@@ -20,14 +21,14 @@ Turns any LLM-powered agent into a first-class Figma collaborator: No more click
 
 Before installation, ensure you have:
 
-- **Figma Desktop App** (Free version or Paid)
-- **MCP-compatible application** (Cursor, VSCode, AntiGravity, etc.)
+- **Figma Desktop App** (Free version or Paid, browser version of Figma not supported) 
+- **MCP-compatible application** (Cursor, VSCode, AntiGravity, or another MCP-enabled editor.)
 
 ## Quick Start
 
 ### Step 1: Configure Your MCP Application
 
-Add to your MCP configuration file (`mcp_config.json` for Cursor/VSCode, platform-specific for others):   
+Add to your MCP configuration file (`~/.cursor/mcp_settings.json` for Cursor, `.vscode/mcp.json` for VSCode, or platform-specific location for others):   
 
 ```json
 {
@@ -40,14 +41,16 @@ Add to your MCP configuration file (`mcp_config.json` for Cursor/VSCode, platfor
 }
 ```
 
-### Step 2: Auto-Install Figma Plugin
+### Step 2: Install and Import the Figma Plugin
 
-1. **Start the MCP** once from your AI application (this auto-installs the plugin)
-2. **Open Figma Desktop** → `Plugins` → `Development` → `Import plugin from manifest`
-3. **Select**: `~/.conduit/figma-plugin/manifest.json`
-4. **Copy the channel ID** shown in the Figma plugin i.e. `"purple-owl-27"`
+1. **Start your MCP application** (e.g., Cursor or VSCode) — this automatically downloads and unpacks the Conduit Figma plugin to `~/.conduit/figma-plugin/`
+2. **Open Figma Desktop** → Navigate to `Plugins` → `Development` → `Import plugin from manifest…`
+3. **Select the manifest file**: `~/.conduit/figma-plugin/manifest.json`
+4. **Copy the channel ID** displayed in the Conduit plugin UI (e.g., `"purple-owl-27"`)
 
 ### Step 3: Connect & Create
+
+In your AI assistant (e.g., Cursor chat):
 
 ```text
 User: Talk to Figma on channel "purple-owl-27"
@@ -57,12 +60,15 @@ User: Create a modern navigation bar with our brand color #3366FF
 Agent: ✅ Created navigation bar with brand color #3366FF
 ```
 
+You're good to go! The AI can now read, modify, and create Figma designs.
+
 ## Configuration
 
-To run multiple Conduit instances at the same time (for example in different MCP
-apps), give each one a **unique** `PORT` value in its `env` block.
+> ⚠️ **Security Notice**: Conduit requires file system access. Only add trusted directories to `ALLOWED_ROOTS`. Always back up your projects before granting write permissions.
 
-### MCP config example
+### Basic Configuration
+
+To customize Conduit's behavior, add environment variables to your MCP configuration:
 
 ```json
 {
@@ -82,77 +88,118 @@ apps), give each one a **unique** `PORT` value in its `env` block.
     }
   }
 }
-```
 
-Key env vars:
 
-- `CHANNEL_KEY` – permanent channel id used to pair the MCP server with the Figma plugin. Copy this value from the Conduit Figma plugin UI (it will look like `purple-owl-26`, `golden-phoenix-58`, etc.).
-- `PORT` – WebSocket port the plugin connects to (default `3055`).
-- `PROJECT_ROOT` – directory Conduit uses for its own logs and temp files (for example `/Users/John/my-project`). In many MCP hosts this defaults to the workspace your IDE is already using; some hosts require you to set it explicitly. This does **not** limit where `ALLOWED_ROOTS` can point.
-- `ALLOWED_ROOTS` – `|`-delimited list of absolute directories Conduit is allowed to treat as safe-write roots (where overwrites are allowed).
-  - You can point this at any directories on your system (for example `/Users/John/my-project`, `/Users/John/Desktop/experiments`, `/Users/John/Downloads/project-xyz`).
-  - Be cautious when adding broad paths (e.g. `~/` or `/`); anything listed here becomes writable by Conduit.
+### Environment Variables Reference
 
-### Windows MCP config (PowerShell example)
+| Variable | Description | Default | Example |
+|----------|-------------|---------|---------|
+| `CHANNEL_KEY` | Permanent channel ID to pair the MCP server with the Figma plugin. Copy from the Conduit plugin UI. | Auto-generated | `purple-owl-26` |
+| `PORT` | WebSocket port the plugin connects to. | `3055` | `3055` |
+| `PROJECT_ROOT` | Directory for Conduit's logs and temp files. Many MCP hosts default this to your workspace; some require explicit configuration. | Workspace root | `/Users/John/my-project` |
+| `ALLOWED_ROOTS` | Pipe-delimited (`|`) list of absolute directories where Conduit can overwrite existing files. Be cautious with broad paths like `~/` or `/`. | None | `/Users/John/my-project\|/Users/John/experiments` |
 
-On Windows, you can configure Conduit using the same env-only contract; the main difference is that your `PROJECT_ROOT` and `ALLOWED_ROOTS` use Windows-style paths. A conceptual MCP config looks like:
+**Important Notes:**
+- `PROJECT_ROOT` does **not** limit where `ALLOWED_ROOTS` can point—they are independent.
+- Only directories listed in `ALLOWED_ROOTS` allow file overwrites. All other locations are read-only or create-only.
 
-```jsonc
+### Windows Configuration
+
+On Windows, use Windows-style paths and PowerShell syntax. Example:
+
+```json
 {
   "mcpServers": {
     "conduit": {
+      "command": "powershell.exe",
       "args": [
         "-NoProfile",
         "-Command",
         "iwr https://conduit.design/install.ps1 -UseBasicParsing | iex"
       ],
       "env": {
-        // existing keys from the basic example...
-        "PROJECT_ROOT": "C\\Users\\John\\my-project",
-        "ALLOWED_ROOTS": "C\\Users\\John\\my-project|C\\Users\\John\\Desktop\\experiments|C\\Users\\John\\Downloads\\project-xyz"
+        "CHANNEL_KEY": "purple-owl-26",
+        "PORT": "3055",
+        "PROJECT_ROOT": "C:\\Users\\John\\my-project",
+        "ALLOWED_ROOTS": "C:\\Users\\John\\my-project|C:\\Users\\John\\Desktop\\experiments"
       }
     }
   }
 }
 ```
 
-Double backslashes in the JSON are required for Windows paths; at runtime these become the usual `C:\\Users\\John\\...` form.
+> **Note**: Use double backslashes (`\\`) in JSON for Windows paths. At runtime, these become standard Windows paths like `C:\Users\John\...`.
 
-### Advanced: enable instant edit
+### Instant AI edit Integration (Optional)
 
-To turn on AI-powered instant edits, add your provider keys and defaults to the same `env` block. For example, on top of the keys shown above you can include just the AI-related fields:
+To enable AI-powered instant edits, add your provider API keys and model preferences:
 
-```jsonc
+```json
+{
+  "mcpServers": {
+    "conduit": {
+      "command": "/bin/bash",
+      "args": ["-c", "curl -sSL https://conduit.design/install.sh | bash -s -- --run"],
       "env": {
-        // existing keys from the basic example...
+        "CHANNEL_KEY": "purple-owl-26",
+        "PORT": "3055",
+        "PROJECT_ROOT": "/Users/John/my-project",
+        "ALLOWED_ROOTS": "/Users/John/my-project",
         "AI_DEFAULT_PROVIDER": "openai",
         "AI_DEFAULT_MODEL": "gpt-5-1",
         "OPENAI_API_KEY": "sk-proj-...",
         "AI_TEMPERATURE": "0.7",
         "AI_MAX_TOKENS": "4096"
       }
+    }
+  }
+}
 ```
 
-### AI Provider Options
+#### AI Provider Options
 
-| Provider | Models | Environment Key |
-|----------|--------|----------------|
+| Provider | Supported Models | Environment Key |
+|----------|-----------------|-----------------|
 | **OpenAI** | `gpt-5-1`, `gpt-5-1-mini` | `OPENAI_API_KEY` |
 | **Anthropic** | `claude-sonnet-4-5`, `claude-opus-4-5` | `ANTHROPIC_API_KEY` |
 | **Google** | `gemini-3.0-pro`, `gemini-3.0-flash` | `GEMINI_API_KEY` |
 
+#### AI-Specific Environment Variables
+
+| Variable | Description | Default | Example |
+|----------|-------------|---------|---------|
+| `AI_DEFAULT_PROVIDER` | AI provider to use for instant edits. | None | `openai` |
+| `AI_DEFAULT_MODEL` | Model to use for instant edits. | None | `gpt-5-1` |
+| `AI_TEMPERATURE` | Creativity/randomness (0.0-1.0). | `0.7` | `0.7` |
+| `AI_MAX_TOKENS` | Maximum tokens for AI responses. | `4096` | `4096` |
+
 ## Export Capabilities
 
-Conduit can export deploy-ready websites from WYSIWYG `{page-breakpoint-theme}` Figma frames:
+Conduit can export production-ready websites from Figma frames using the `{page-breakpoint-theme}` naming convention:
 
-- **Responsive Design** (mobile, tablet, desktop breakpoints)  
-- **Automatic Theming** (dark & light mode themes)  
-- **Asset Export** (SVG, images with optimization)  
-- **CSS Tokens** (design system variables)  
-- **Complete Files** (HTML, CSS, assets)  
-- **Google Fonts** (automatic imports & optimization)  
-- **Multi-page** (full website exports)  
-- **Hyperlinks** (navigation & interactions)
+### Export Features
+- **Responsive Design** — Automatic mobile, tablet, and desktop breakpoints  
+- **Theming** — Dark and light mode support  
+- **Asset Export** — Optimized SVG and image exports  
+- **CSS Tokens** — Design system variables extracted automatically  
+- **Complete Files** — HTML, CSS, and all assets bundled together  
+- **Google Fonts** — Automatic imports and optimization  
+- **Multi-Page** — Export entire websites with multiple pages  
+- **Hyperlinks** — Navigation and interaction support
+
+### Export Workflow
+1. Name your Figma frames using the pattern: `{page-breakpoint-theme}`
+   - Example: `home-desktop-light`, `about-mobile-dark`
+2. Use the `export` tool via your AI assistant
+3. Conduit generates complete HTML/CSS/JSX with all assets
+
+## Supported Applications
+
+| Application | Configuration Location | Status |
+|-------------|----------------------|--------|
+| [Cursor](https://cursor.com) | `~/.cursor/mcp_settings.json` | ✅ Stable |
+| [Google Antigravity](https://antigravity.google.com/) | Extension settings | ✅ Stable |
+| [VSCode](https://code.visualstudio.com) | `.vscode/mcp.json` | ✅ Stable |
 
 ## Supported Applications
 
@@ -164,43 +211,144 @@ Conduit can export deploy-ready websites from WYSIWYG `{page-breakpoint-theme}` 
 
 ## Supported Platforms
 
-Conduit currently supports the following operating systems via its one-line installers and prebuilt binaries:
+Conduit supports the following operating systems with one-line installers and prebuilt binaries:
 
-- **macOS (Apple Silicon / arm64)**
+- **macOS (Apple Silicon / ARM64)**
 - **macOS (Intel / x64)**
 - **Linux (x64)**
-- **Linux (arm64)**
+- **Linux (ARM64)**
 - **Windows (x64)**
-- **Windows (ARM64)** – beta (native ARM64 binary)
+- **Windows (ARM64)** 
 
-## Tool API:
-- Read and Write for Figma API (Single / Batch): `annotation, asset, autolayout, boolean, component, constraint, effect, grid, guide, group, node, page, property, selection, shape, style, text, transform, variant, variable`
-- Helper tools: `bulk, compare, describe, export, info, join, jsx`
+## Tool API
+
+Conduit exposes the following tools to LLM agents:
+
+### Design Operation Tools
+
+Most tools have read/write and single/batch mode build in.
+
+| Tool | Description |
+|------|-------------|
+| `annotation` | Read and write Figma annotations and comments. |
+| `asset` | Get and set assets (images, icons) within Figma files. |
+| `autolayout` | Configure Auto Layout properties on frames and components. |
+| `boolean` | Perform boolean operations (union, subtract, intersect) on shapes. |
+| `component` | Create, modify, and manage Figma components and instances. |
+| `constraint` | Set layout constraints for responsive design. |
+| `effect` | Apply visual effects (shadows, blurs) to nodes. |
+| `grid` | Configure layout grids and guides. |
+| `guide` | Manage ruler guides on frames and pages. |
+| `group` | Group and ungroup nodes. |
+| `node` | Core node operations (create, update, delete, move, duplicate). |
+| `page` | Manage Figma pages (create, rename, delete, navigate). |
+| `property` | Read and write custom properties on nodes. |
+| `selection` | Get and set the current selection in Figma. |
+| `shape` | Create and modify shape nodes (rectangles, ellipses, polygons, etc.). |
+| `style` | Manage text, fill, stroke, and effect styles. |
+| `text` | Create and modify text nodes with full typography control. |
+| `transform` | Apply transformations (rotation, scale, position). |
+| `variant` | Manage component variants and variant properties. |
+| `variable` | Read and write Figma variables (colors, numbers, strings, etc.). |
+
+
+### Helper Tools
+
+| Tool | Description |
+|------|-------------|
+| `bulk` | Execute multiple operations in a single batch for performance. |
+| `compare` | Compare two nodes or designs and report differences. |
+| `describe` | Generate natural language descriptions of selected nodes or entire designs. |
+| `export` | Export Figma frames as HTML/CSS/JSX with assets and responsive code. |
+| `info` | Get metadata and information about the current Figma file, pages, and nodes. |
+| `join` | Combine multiple nodes or paths using various join strategies. |
+| `jsx` | Get, set, or edit JSX representations of Figma nodes. |
+
 
 ## File sandboxing:
 
 "Working directory" is what your AI agent app (Cursor / VSCode) advertise as allowed roots. Please avoid adding low-level directories to config, AI's might in rare cases overwrite files unintentionally. Ensure you backup your project files frequently. 
 
-1. Conduit can read files from your entire system
-2. Conduit can soft-write to your entire system (only create new files/folders)
-3. Conduit can safe-write to working directory / paths you set in config (overwrite existing files and everything soft-write can do)
+1. **Read Access** — Conduit can read files from your entire system.
+2. **Soft-Write Access** — Conduit can create new files and folders anywhere on your system but **cannot overwrite** existing files.
+3. **Safe-Write Access** — Conduit can overwrite existing files **only** within directories listed in `ALLOWED_ROOTS`.
 
-## Privacy acknowledgment
+### Security Best Practices
 
-Only data you activly work on is exposed to external services. See bellow how they are effected. 
+> ⚠️ **Warning**: Only add trusted directories to `ALLOWED_ROOTS`. Avoid broad paths like `~/` or `/` that grant write access to sensitive system or user files.
+
+- **Limit `ALLOWED_ROOTS`** to project-specific directories (e.g., `/Users/John/my-project`).
+- **Back up your projects** regularly before granting write permissions.
+- **Review directories** in `ALLOWED_ROOTS` periodically to ensure they're still appropriate.
+
+## Privacy & Data Usage
+
+Only data you activly work on is exposed to external services. See bellow regarding what gets exposed
 
 1. Conduit is an entirly local application and has no analytics and does not call any external service or server.
 2. Conduit uses (Cursor / VSCode) as your daily driver. If you trust them your good to go. Their EULA applies.
 3. Conduit connects to google-gemini, antrhropic, openAI api's if you use the "instant edit" feature. Their EULA applies.
 
-## Minor early access limitations:
+## Auto-Updates
 
-- Batch-mode for Instant AI edit is not ready, (workaround is to target parent) (fixing soon)
-- Instant AI edit works on most node types, but some complex node types are not supported (Instant AI edit will work in 95% of use cases, this will be resolved in the medium term) 
-- Instant AI edit does not work with multi level styles yet, use Turn by turn mode to use multi-style (fixing very soon)
-- Exports only html, css, jsx. (Tailwind, Vue, etc coming later, medium term)
-- Chaining mixed tool calls together (bulk) in one prompt is experimental, only some tools has support (this will be resolved in the medium term)
+Conduit automatically updates both the **MCP server** and the **Figma plugin** when you restart your MCP application or reload your MCP configuration.
+
+### Update Process
+
+1. **On MCP Restart**: Conduit checks for updates to the server binary and Figma plugin.
+2. **Auto-Download**: If updates are available, they are downloaded and applied automatically.
+3. **Plugin Sync**: The Figma plugin is updated in `~/.conduit/figma-plugin/` without requiring manual re-import.
+
+
+## Troubleshooting
+
+### Figma Plugin Not Connecting
+
+**Issue**: The Figma plugin shows "Disconnected" or fails to pair with the MCP server.
+
+**Solution**:
+1. Verify the `CHANNEL_KEY` in your MCP configuration matches the channel ID shown in the Figma plugin UI. (This step is otional, you can also just give channel_key to the AI when joining)
+2. Ensure the `PORT` is not blocked by a firewall or already in use.
+3. Restart both your MCP application and the Figma desktop app.
+
+### File Write Errors
+
+**Issue**: Conduit fails to write or overwrite files.
+
+**Solution**:
+1. Check that the target directory is listed in `ALLOWED_ROOTS`.
+2. Verify the path uses absolute paths (e.g., `/Users/John/my-project`, not `~/my-project`).
+3. Ensure you have file system permissions for the target directory.
+
+### Plugin Import Issues
+
+**Issue**: Cannot import the Figma plugin via `Plugins` → `Development` → `Import plugin from manifest…`.
+
+**Solution**:
+1. **Ensure you're using Figma Desktop** — Plugin import is not available in the browser version.
+2. Verify the manifest file exists at `~/.conduit/figma-plugin/manifest.json`.
+3. If the file is missing, restart your MCP application to trigger the auto-download.
+
+### AI Instant Edit Not Working
+
+**Issue**: AI-powered instant edits fail or are unavailable.
+
+**Solution**:
+1. Verify you've added the appropriate API key (e.g., `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GEMINI_API_KEY`) to your MCP configuration.
+2. Check that `AI_DEFAULT_PROVIDER` and `AI_DEFAULT_MODEL` are set correctly.
+3. Ensure your API key is valid and has sufficient quota.
+
+## Limitations
+
+> **Early Access Notice**: Conduit is under active development. The following limitations are being actively addressed:
+
+- **Instant AI Edit**: Batch-mode not yet available (workaround: target parent nodes directly).
+- **Node Type Coverage**: Instant AI Edit supports ~95% of node types; some complex types require turn-by-turn mode.
+- **Multi-level Styles**: Instant AI Edit doesn't support multi-level styles yet; use turn-by-turn mode for these cases.
+- **Export Formats**: Currently limited to HTML, CSS, and JSX. Tailwind, Vue, and other frameworks coming in future releases.
+- **Bulk Operations**: Chaining mixed tool calls in bulk mode is experimental; only select tools currently support this.
+
 
 ---
   
-© 2025 [conduit.design](https://conduit.design/)  - All rights reserved.
+© 2025 [conduit.design](https://conduit.design/) - All rights reserved.
