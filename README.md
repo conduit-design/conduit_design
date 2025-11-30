@@ -1,5 +1,6 @@
 # conduit.design
 
+[![Latest release](https://img.shields.io/github/v/release/conduit-design/conduit_design?sort=semver)](https://github.com/conduit-design/conduit_design/releases)
 [![Downloads (7d)](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/conduit-design/conduit_design/main/meta/github-release-downloads-weekly.json?v=1)](https://github.com/conduit-design/conduit_design/releases)
 [![Downloads (30d)](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/conduit-design/conduit_design/main/meta/github-release-downloads-30d.json?v=1)](https://github.com/conduit-design/conduit_design/releases)
 [![Total downloads](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/conduit-design/conduit_design/main/meta/github-release-downloads.json)](https://github.com/conduit-design/conduit_design/releases)
@@ -55,11 +56,10 @@ Agent: ✅ Created navigation bar with brand color #3366FF
 
 ## Configuration
 
-Conduit is configured via environment variables in your MCP configuration. You do **not** need to pass ports or paths as CLI arguments to the install script – the one-line installer inherits whatever env you define here.
+To run multiple Conduit instances at the same time (for example in different MCP
+apps), give each one a **unique** `PORT` value in its `env` block.
 
-### Basic MCP config (recommended)
-
-Minimal recommended setup:
+### MCP config example
 
 ```json
 {
@@ -73,8 +73,8 @@ Minimal recommended setup:
       "env": {
         "CHANNEL_KEY": "purple-owl-26",
         "PORT": "3055",
-        "PROJECT_ROOT": "/Users/you/.conduit-workspace",
-        "ALLOWED_ROOTS": "/Users/you/.conduit-workspace|/Users/you/assets|/Users/you/Desktop/experiments"
+        "PROJECT_ROOT": "/Users/John/my-project",
+        "ALLOWED_ROOTS": "/Users/John/Desktop/experiments|/Users/John/Downloads/project-xyz"
       }
     }
   }
@@ -83,68 +83,51 @@ Minimal recommended setup:
 
 Key env vars:
 
-- `CHANNEL_KEY` – permanent channel id used to pair the MCP server with the Figma plugin.
+- `CHANNEL_KEY` – permanent channel id used to pair the MCP server with the Figma plugin. Copy this value from the Conduit Figma plugin UI (it will look like `purple-owl-26`, `golden-phoenix-58`, etc.).
 - `PORT` – WebSocket port the plugin connects to (default `3055`).
-- `PROJECT_ROOT` – directory Conduit uses for its own logs and temp files (for example `/Users/you/.conduit-workspace`). This does **not** limit where `ALLOWED_ROOTS` can point.
+- `PROJECT_ROOT` – directory Conduit uses for its own logs and temp files (for example `/Users/John/my-project`). In many MCP hosts this defaults to the workspace your IDE is already using; some hosts require you to set it explicitly. This does **not** limit where `ALLOWED_ROOTS` can point.
 - `ALLOWED_ROOTS` – `|`-delimited list of absolute directories Conduit is allowed to treat as safe-write roots (where overwrites are allowed).
-  - You can point this at any directories on your system (for example `/Users/you/.conduit-workspace`, `/Users/you/assets`, `/Users/you/Desktop/experiments`).
+  - You can point this at any directories on your system (for example `/Users/John/my-project`, `/Users/John/Desktop/experiments`, `/Users/John/Downloads/project-xyz`).
   - Be cautious when adding broad paths (e.g. `~/` or `/`); anything listed here becomes writable by Conduit.
 
 ### Windows MCP config (PowerShell example)
 
-On Windows, you can configure Conduit using the same env-only contract, but invoke it via PowerShell instead of `/bin/bash`. A conceptual MCP config looks like:
+On Windows, you can configure Conduit using the same env-only contract; the main difference is that your `PROJECT_ROOT` and `ALLOWED_ROOTS` use Windows-style paths. A conceptual MCP config looks like:
 
-```json
+```jsonc
 {
   "mcpServers": {
     "conduit": {
-      "command": "powershell",
       "args": [
         "-NoProfile",
         "-Command",
         "iwr https://conduit.design/install.ps1 -UseBasicParsing | iex"
       ],
       "env": {
-        "CHANNEL_KEY": "purple-owl-26",
-        "PORT": "3055",
-        "PROJECT_ROOT": "C:\\Users\\you\\.conduit-workspace",
-        "ALLOWED_ROOTS": "C:\\Users\\you\\.conduit-workspace|C:\\Users\\you\\assets|C:\\Users\\you\\Desktop\\experiments"
+        // existing keys from the basic example...
+        "PROJECT_ROOT": "C\\Users\\John\\my-project",
+        "ALLOWED_ROOTS": "C\\Users\\John\\my-project|C\\Users\\John\\Desktop\\experiments|C\\Users\\John\\Downloads\\project-xyz"
       }
     }
   }
 }
 ```
 
-This uses the same env keys described above; only the `command`/`args` change to a PowerShell-based installer/launcher. Your MCP host is responsible for passing the `env` block through to the PowerShell process, where it is available as `$env:CHANNEL_KEY`, `$env:PORT`, etc.
+Double backslashes in the JSON are required for Windows paths; at runtime these become the usual `C:\\Users\\John\\...` form.
 
 ### Advanced: enable instant edit
 
-To turn on AI-powered instant edits, add your provider keys and defaults to the same `env` block:
+To turn on AI-powered instant edits, add your provider keys and defaults to the same `env` block. For example, on top of the keys shown above you can include just the AI-related fields:
 
-```json
-{
-  "mcpServers": {
-    "conduit": {
-      "command": "/bin/bash",
-      "args": [
-        "-c",
-        "curl -sSL https://conduit.design/install.sh | bash -s -- --run"
-      ],
+```jsonc
       "env": {
-        "CHANNEL_KEY": "purple-owl-26",
-        "PORT": "3055",
-        "PROJECT_ROOT": "/path/to/project",
-        "ALLOWED_ROOTS": "/path/to/project|/path/to/project/temp_files|/path/to/project/_logs",
-
+        // existing keys from the basic example...
         "AI_DEFAULT_PROVIDER": "openai",
         "AI_DEFAULT_MODEL": "gpt-5-1",
         "OPENAI_API_KEY": "sk-proj-...",
         "AI_TEMPERATURE": "0.7",
         "AI_MAX_TOKENS": "4096"
       }
-    }
-  }
-}
 ```
 
 ### AI Provider Options
@@ -217,3 +200,4 @@ Only data you activly work on is exposed to external services. See bellow how th
 ---
   
 © 2025 [conduit.design](https://conduit.design/)  - All rights reserved.
+  
