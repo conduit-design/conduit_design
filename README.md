@@ -216,47 +216,49 @@ Conduit supports the following operating systems with one-line installers and pr
 
 ## Tool API
 
-Conduit exposes the following tools to LLM agents:
+Conduit exposes the following tools to LLM agents. Most tools support both single and batch operations.
 
-### Design Operation Tools
-
-Most tools have read/write and single/batch mode built in.
+### Core Design Tools
 
 | Tool | Description |
 |------|-------------|
-| `annotation` | Read and write Figma annotations and comments. |
-| `asset` | Get and set assets (images, icons) within Figma files. |
-| `autolayout` | Configure Auto Layout properties on frames and components. |
-| `boolean` | Perform boolean operations (union, subtract, intersect) on shapes. |
-| `component` | Create, modify, and manage Figma components and instances. |
-| `constraint` | Set layout constraints for responsive design. |
-| `effect` | Apply visual effects (shadows, blurs) to nodes. |
-| `grid` | Configure layout grids and guides. |
-| `guide` | Manage ruler guides on frames and pages. |
-| `group` | Group and ungroup nodes. |
-| `node` | Core node operations (create, update, delete, move, duplicate). |
-| `page` | Manage Figma pages (create, rename, delete, navigate). |
-| `property` | Read and write custom properties on nodes. |
-| `selection` | Get and set the current selection in Figma. |
-| `shape` | Create and modify shape nodes (rectangles, ellipses, polygons, etc.). |
-| `style` | Manage text, fill, stroke, and effect styles. |
-| `text` | Create and modify text nodes with full typography control. |
-| `transform` | Apply transformations (rotation, scale, position). |
-| `variant` | Manage component variants and variant properties. |
-| `variable` | Read and write Figma variables (colors, numbers, strings, etc.). |
+| `annotation` | Get, set, and delete annotations on Figma nodes. |
+| `asset` | Get or set images, SVG, and vector assets on nodes. |
+| `autolayout` | Configure auto layout stacks and grids with spacing, padding, and alignment. |
+| `boolean` | Perform boolean operations (union, subtract, intersect, exclude) or flatten nodes. |
+| `component` | Create, manage, and modify components, instances, and component sets. |
+| `constraint` | Set layout constraints for responsive behavior (left, right, top, bottom, center, scale, stretch). |
+| `effect` | Apply visual effects like shadows and blurs to nodes. |
+| `grid` | Create, update, delete, and retrieve layout grids on frames and components. |
+| `group` | Group or ungroup nodes. |
+| `guide` | Add, delete, or retrieve ruler guides on pages. |
+| `node` | Insert, move, clone, rename, and delete nodes with full hierarchy control. |
+| `page` | Create, delete, rename, duplicate, or navigate between pages. |
+| `property` | Set node properties like visibility, locked state, and opacity. |
+| `shape` | Create shapes (rectangle, ellipse, star, polygon, line, frame) with styling. |
+| `style` | Create, update, remove, and apply fill, stroke, text, and effect styles. |
+| `text` | Create and style text nodes with typography, alignment, and formatting. |
+| `transform` | Set position, size, rotation, or apply transformation matrices. |
+| `variant` | Manage component variants and their properties within component sets. |
+| `variable` | Create and manage design tokens (colors, numbers, strings, booleans). |
 
-
-### Helper Tools
+### Advanced Tools
 
 | Tool | Description |
 |------|-------------|
-| `bulk` | Execute multiple operations in a single batch for performance. |
-| `compare` | Compare two nodes or designs and report differences. |
-| `describe` | Generate natural language descriptions of selected nodes or entire designs. |
-| `export` | Export Figma frames as HTML/CSS/JSX with assets and responsive code. |
-| `info` | Get metadata and information about the current Figma file, pages, and nodes. |
-| `join` | Combine multiple nodes or paths using various join strategies. |
-| `jsx` | Get, set, or edit JSX representations of Figma nodes. |
+| `export` | Export Figma frames to production-ready HTML/CSS with responsive breakpoints and themes. |
+| `jsx` | Get, set, or AI-edit JSX representations of Figma nodes. |
+
+### Utility Tools
+
+| Tool | Description |
+|------|-------------|
+| `bulk` | Execute multiple MCP commands in sequence with structured results. |
+| `compare` | Compare JSON data and generate diffs for tracking changes. |
+| `describe` | Get detailed metadata and documentation for any MCP tool. |
+| `info` | Retrieve detailed node information in multiple formats with depth control. |
+| `join` | Connect to a Figma channel (required before other operations). |
+| `selection` | Get or set the current node selection in Figma. |
 
 
 ## File Sandboxing:
