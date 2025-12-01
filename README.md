@@ -37,7 +37,14 @@ Add to your MCP configuration file (`~/.cursor/mcp_settings.json` for Cursor, `.
   "mcpServers": {
     "conduit": {
       "command": "/bin/bash",
-      "args": ["-c", "curl -sSL https://conduit.design/install.sh | bash -s -- --run"]
+      "args": [
+        "-c",
+        "curl -sSL https://conduit.design/install.sh | bash && ~/.local/bin/conduit-mcp --stdio"
+      ],
+      "env": {
+        "CHANNEL_KEY": "purple-owl-26",
+        "PORT": "3055"
+      }
     }
   }
 }
@@ -80,7 +87,7 @@ To customize Conduit's behavior, add environment variables to your MCP configura
       "command": "/bin/bash",
       "args": [
         "-c",
-        "curl -sSL https://conduit.design/install.sh | bash -s -- --run"
+        "curl -sSL https://conduit.design/install.sh | bash && ~/.local/bin/conduit-mcp --stdio"
       ],
       "env": {
         "CHANNEL_KEY": "purple-owl-26",
@@ -143,7 +150,10 @@ To enable AI-powered instant edits, add your provider API keys and model prefere
   "mcpServers": {
     "conduit": {
       "command": "/bin/bash",
-      "args": ["-c", "curl -sSL https://conduit.design/install.sh | bash -s -- --run"],
+      "args": [
+        "-c",
+        "curl -sSL https://conduit.design/install.sh | bash && ~/.local/bin/conduit-mcp --stdio"
+      ],
       "env": {
         "CHANNEL_KEY": "purple-owl-26",
         "PORT": "3055",
