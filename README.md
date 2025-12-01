@@ -1,5 +1,7 @@
 # conduit.design
 
+⚠️️ Auto-install is temporarily out of order. Please see the manual installation instructions [here](https://github.com/conduit-design/conduit_design/issues/6) ⚠️️
+
 ![macOS Intel](https://img.shields.io/badge/macOS-Apple%20Silicon_/_Intel-000000?logo=apple&logoColor=white) ![Linux x64 / ARM](https://img.shields.io/badge/Linux-x64_/_ARM64-FCC624?logo=linux&logoColor=black) ![Windows ARM](https://img.shields.io/badge/Windows-X64_/_ARM64-0078D6?logo=windows&logoColor=white) 
 
 [![Downloads (7d)](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/conduit-design/conduit_design/main/meta/github-release-downloads-weekly.json?v=1)](https://github.com/conduit-design/conduit_design/releases)
