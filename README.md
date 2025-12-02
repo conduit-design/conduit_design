@@ -107,7 +107,7 @@ To customize Conduit's behavior, add environment variables to your MCP configura
 
 ### Windows Configuration
 
-On Windows, use Windows-style paths and PowerShell syntax. Example:
+On Windows, use Windows-style paths and PowerShell syntax. The command first runs the installer, then executes the binary, mirroring the logic of the `bash` command. Example:
 
 ```json
 {
@@ -117,11 +117,9 @@ On Windows, use Windows-style paths and PowerShell syntax. Example:
       "args": [
         "-NoProfile",
         "-Command",
-        "iwr https://conduit.design/install.ps1 -UseBasicParsing | iex"
+        "iwr https://conduit.design/install.ps1 -UseBasicParsing | iex; & \"$env:USERPROFILE\\.local\\bin\\conduit-mcp.exe\" --stdio"
       ],
       "env": {
-        "CHANNEL_KEY": "purple-owl-26",
-        "PORT": "3055",
         "PROJECT_ROOT": "C:\\Users\\John\\my-project",
         "ALLOWED_ROOTS": "C:\\Users\\John\\my-project|C:\\Users\\John\\Desktop\\experiments"
       }
@@ -183,6 +181,7 @@ To enable AI-powered instant edits, add your provider API keys and model prefere
 Conduit can export production-ready websites from Figma frames using the `{page-breakpoint-theme}` naming convention:
 
 ### Export Features
+
 - **Responsive Design** — Automatic mobile, tablet, and desktop breakpoints  
 - **Theming** — Dark and light mode support  
 - **Asset Export** — Optimized SVG and image exports  
@@ -193,6 +192,7 @@ Conduit can export production-ready websites from Figma frames using the `{page-
 - **Hyperlinks** — Navigation and interaction support
 
 ### Export Workflow
+
 1. Name your Figma frames using the pattern: `{page-breakpoint-theme}`
    - Example: `home-desktop-light`, `about-mobile-dark`
 2. Use the `export` tool via your AI assistant
@@ -200,22 +200,13 @@ Conduit can export production-ready websites from Figma frames using the `{page-
 
 ## Supported Applications
 
+Other MCP-compatible applications can also use Conduit. Below is a list of tested applications:
+
 | Application | Configuration Location | Status |
 |-------------|----------------------|--------|
 | [Cursor](https://cursor.com) | `~/.cursor/mcp_settings.json` | ✅ Stable |
 | [Google Antigravity](https://antigravity.google.com/) | Extension settings | ✅ Stable |
 | [VSCode](https://code.visualstudio.com) | `.vscode/mcp.json` | ✅ Stable |
-
-## Supported Platforms
-
-Conduit supports the following operating systems with one-line installers and prebuilt binaries:
-
-- **macOS (Apple Silicon / ARM64)**
-- **macOS (Intel / x64)**
-- **Linux (x64)**
-- **Linux (ARM64)**
-- **Windows (x64)**
-- **Windows (ARM64)** 
 
 ## Tool API
 
@@ -245,13 +236,6 @@ Conduit exposes the following tools to LLM agents. Most tools support both singl
 | `variant` | Manage component variants and their properties within component sets. |
 | `variable` | Create and manage design tokens (colors, numbers, strings, booleans). |
 
-### Advanced Tools
-
-| Tool | Description |
-|------|-------------|
-| `export` | Export Figma frames to production-ready HTML/CSS with responsive breakpoints and themes. |
-| `jsx` | Get, set, or AI-edit JSX representations of Figma nodes. |
-
 ### Utility Tools
 
 | Tool | Description |
@@ -262,6 +246,8 @@ Conduit exposes the following tools to LLM agents. Most tools support both singl
 | `info` | Retrieve detailed node information in multiple formats with depth control. |
 | `join` | Connect to a Figma channel (required before other operations). |
 | `selection` | Get or set the current node selection in Figma. |
+| `export` | Export Figma frames to production-ready HTML/CSS with responsive breakpoints and themes. |
+| `jsx` | Get, set, or AI-edit JSX representations of Figma nodes. |
 
 
 ## File Sandboxing:
