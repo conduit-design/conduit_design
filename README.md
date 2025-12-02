@@ -95,9 +95,9 @@ To customize Conduit's behavior, add environment variables to your MCP configura
 - **`PROJECT_ROOT`**: The directory where Conduit will store its logs and temporary files. Many MCP hosts default this to your current workspace, but some may require you to set it explicitly. (Example: `"/Users/John/my-project"`)
 - **`ALLOWED_ROOTS`**: A pipe-delimited (`|`) list of absolute directory paths where Conduit is allowed to create and overwrite files. Be cautious with broad paths like `~/` or `/`. (Example: `"/Users/John/my-project|/Users/John/experiments"`)
 
-**Important Notes:**
-- `PROJECT_ROOT` does **not** limit where `ALLOWED_ROOTS` can point—they are independent.
-- Only directories listed in `ALLOWED_ROOTS` allow file overwrites. All other locations are read-only or create-only.
+> [!IMPORTANT]
+> - `PROJECT_ROOT` does **not** limit where `ALLOWED_ROOTS` can point—they are independent.
+> - Only directories listed in `ALLOWED_ROOTS` allow file overwrites. All other locations are read-only or create-only.
 
 ### Windows Configuration
 
