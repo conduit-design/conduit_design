@@ -35,9 +35,7 @@ Add to your MCP configuration file (`~/.cursor/mcp_settings.json` for Cursor, `.
   "mcpServers": {
     "conduit": {
       "command": "/bin/bash",
-      "args": [
-        "-c", "curl -sSL https://conduit.design/install.sh | bash && ~/.local/bin/conduit-mcp --stdio"
-      ]
+      "args": ["-c", "curl -sSL https://conduit.design/run.sh | bash"]
     }
   }
 }
@@ -78,9 +76,7 @@ To customize Conduit's behavior, add environment variables to your MCP configura
   "mcpServers": {
     "conduit": {
       "command": "/bin/bash",
-      "args": [
-        "-c", "curl -sSL https://conduit.design/install.sh | bash && ~/.local/bin/conduit-mcp --stdio"
-      ],
+      "args": ["-c", "curl -sSL https://conduit.design/run.sh | bash"],
       "env": {
         "CHANNEL_KEY": "purple-owl-26",
         "PORT": "3055",
@@ -107,7 +103,7 @@ To customize Conduit's behavior, add environment variables to your MCP configura
 
 ### Windows Configuration
 
-On Windows, use Windows-style paths and PowerShell syntax. The command first runs the installer, then executes the binary, mirroring the logic of the `bash` command. Example:
+On Windows, use Windows-style paths and PowerShell syntax. Example:
 
 ```json
 {
@@ -117,7 +113,7 @@ On Windows, use Windows-style paths and PowerShell syntax. The command first run
       "args": [
         "-NoProfile",
         "-Command",
-        "iwr https://conduit.design/install.ps1 -UseBasicParsing | iex; & \"$env:USERPROFILE\\.local\\bin\\conduit-mcp.exe\" --stdio"
+        "iwr https://conduit.design/run.ps1 -UseBasicParsing | iex"
       ],
       "env": {
         "PROJECT_ROOT": "C:\\Users\\John\\my-project",
@@ -140,9 +136,7 @@ To enable AI-powered instant edits, add your provider API keys and model prefere
   "mcpServers": {
     "conduit": {
       "command": "/bin/bash",
-      "args": [
-        "-c", "curl -sSL https://conduit.design/install.sh | bash && ~/.local/bin/conduit-mcp --stdio"
-      ],
+      "args": ["-c", "curl -sSL https://conduit.design/run.sh | bash"],
       "env": {
         "CHANNEL_KEY": "purple-owl-26",
         "PORT": "3055",
