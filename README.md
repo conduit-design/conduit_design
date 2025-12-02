@@ -90,12 +90,10 @@ To customize Conduit's behavior, add environment variables to your MCP configura
 
 ### Environment Variables Reference
 
-| Variable | Description | Default | Example |
-|----------|-------------|---------|---------|
-| `CHANNEL_KEY` | Permanent channel ID to pair the MCP server with the Figma plugin. Copy from the Conduit plugin UI. | Auto-generated | `purple-owl-26` |
-| `PORT` | WebSocket port the plugin connects to. | `3055` | `3055` |
-| `PROJECT_ROOT` | Directory for Conduit's logs and temp files. Many MCP hosts default this to your workspace; some require explicit configuration. | Workspace root | `/Users/John/my-project` |
-| `ALLOWED_ROOTS` | Pipe-delimited (`\|`) list of absolute directories where Conduit can overwrite existing files. Be cautious with broad paths like `~/` or `/`. | None | `/Users/John/my-project\|/Users/John/experiments` |
+- **`CHANNEL_KEY`**: A permanent channel ID to pair the MCP server with the Figma plugin. If you don't provide one, it will be auto-generated. You can copy the ID from the Conduit plugin UI inside Figma. (Example: `"purple-owl-26"`)
+- **`PORT`**: The WebSocket port the plugin connects to. (Default: `3055`)
+- **`PROJECT_ROOT`**: The directory where Conduit will store its logs and temporary files. Many MCP hosts default this to your current workspace, but some may require you to set it explicitly. (Example: `"/Users/John/my-project"`)
+- **`ALLOWED_ROOTS`**: A pipe-delimited (`|`) list of absolute directory paths where Conduit is allowed to create and overwrite files. Be cautious with broad paths like `~/` or `/`. (Example: `"/Users/John/my-project|/Users/John/experiments"`)
 
 **Important Notes:**
 - `PROJECT_ROOT` does **not** limit where `ALLOWED_ROOTS` can point—they are independent.
