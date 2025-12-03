@@ -11,6 +11,38 @@ Turn any LLM-powered agent into a first-class Figma collaborator. No more clicki
 
 **[Watch the Demo →](https://www.linkedin.com/posts/andr%C3%A9-j-1676a2169_launch-video-the-landing-page-goes-live-activity-7390030243383730176-WNnL)**
 
+<details>
+<summary>Table of Contents (Click to expand)</summary>
+
+- [Features](#features)
+- [Prerequisites](#prerequisites)
+- [Quick Start](#quick-start)
+  - [Step 1: Configure Your MCP Application](#step-1-configure-your-mcp-application)
+  - [Step 2: Install and Import the Figma Plugin](#step-2-install-and-import-the-figma-plugin)
+  - [Step 3: Connect & Create](#step-3-connect--create)
+- [Configuration](#configuration)
+  - [Basic Configuration](#basic-configuration)
+  - [Environment Variables Reference](#environment-variables-reference)
+  - [Windows Configuration](#windows-configuration)
+  - [Instant AI edit Integration](#instant-ai-edit-integration-optional)
+- [Export Capabilities](#export-capabilities)
+  - [Export Features](#export-features)
+  - [Export Workflow](#export-workflow)
+- [Supported Applications](#supported-applications)
+- [Tool API](#tool-api)
+  - [Core Design Tools](#core-design-tools)
+  - [Utility Tools](#utility-tools)
+- [File Sandboxing](#file-sandboxing)
+  - [Security Best Practices](#security-best-practices)
+- [Privacy & Data Usage](#privacy--data-usage)
+- [Auto-Updates](#auto-updates)
+  - [Update Process](#update-process)
+- [Troubleshooting](#troubleshooting)
+- [Limitations](#limitations)
+
+</details>
+
+
 ## Features
 
 - **Full Figma API access** — Batch transform complex designs with simple prompts  
