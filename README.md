@@ -54,7 +54,7 @@ Turn any LLM-powered agent into a first-class Figma collaborator. No more clicki
 Before installation, ensure you have:
 
 - **Figma Desktop App** (Free version or Paid, browser version of Figma not supported) 
-- **MCP-compatible application** ([Cursor](https://cursor.sh/), [VSCode](https://code.visualstudio.com/), AntiGravity, or another MCP-enabled editor.)
+- **MCP-compatible application** ([Cursor](https://cursor.sh/), [VSCode](https://code.visualstudio.com/), [AntiGravity](https://antigravity.google), or another MCP-enabled editor.)
 
 ## Quick Start
 
