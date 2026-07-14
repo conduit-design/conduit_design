@@ -1,0 +1,35 @@
+name: Release download stats
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 2 * * *" # daily at 02:00 UTC
+
+jobs:
+  release-download-stats:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Print release download stats
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: conduit-design/conduit_design
+        run: |
+          echo "## GitHub Release download stats" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+
+          total=$(gh api "repos/$REPO/releases" --paginate \
+            --jq 'map(.assets | map(.download_count) | add // 0) | add // 0')
+
+          echo "Total release asset downloads: $total" | tee -a "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "### Per release" >> "$GITHUB_STEP_SUMMARY"
+
+          gh api "repos/$REPO/releases" --paginate \
+            --jq '.[] | "\(.tag_name): \((.assets | map(.download_count) | add // 0) // 0)"' \
+            | tee -a "$GITHUB_STEP_SUMMARY"
