@@ -1,0 +1,99 @@
+name: Track Release Downloads
+
+on:
+  schedule:
+    # Run daily at 00:00 UTC
+    - cron: '0 0 * * *'
+  workflow_dispatch: # Allow manual triggers
+
+permissions:
+  contents: write
+
+jobs:
+  track-downloads:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Fetch download statistics
+        run: |
+          mkdir -p .github/download-stats
+          
+          # Get current date
+          DATE=$(date -u +"%Y-%m-%d")
+          
+          # Fetch all releases and their download counts
+          gh api repos/conduit-design/conduit_design/releases --paginate --jq '
+            .[] | {
+              tag: .tag_name,
+              published: .published_at,
+              assets: [.assets[] | {
+                name: .name,
+                downloads: .download_count
+              }]
+            }
+          ' > .github/download-stats/latest.json
+          
+          # Create or append to CSV with daily snapshots
+          if [ ! -f .github/download-stats/history.csv ]; then
+            echo "date,tag,asset,downloads" > .github/download-stats/history.csv
+          fi
+          
+          # Parse JSON and append to CSV
+          gh api repos/conduit-design/conduit_design/releases --paginate --jq -r '
+            .[] | .tag_name as $tag | .assets[] | 
+            [$tag, .name, .download_count] | @csv
+          ' | while IFS= read -r line; do
+            echo "$DATE,$line" >> .github/download-stats/history.csv
+          done
+          
+          # Calculate totals
+          TOTAL=$(gh api repos/conduit-design/conduit_design/releases --paginate --jq '
+            map(.assets | map(.download_count) | add // 0) | add // 0
+          ')
+          
+          # Create summary markdown
+          cat > .github/download-stats/README.md << EOF
+          # Download Statistics
+          
+          **Last Updated:** $DATE
+          
+          **Total Downloads:** $TOTAL
+          
+          ## Latest Snapshot
+          
+          \`\`\`json
+          $(cat .github/download-stats/latest.json)
+          \`\`\`
+          
+          ## Platform Breakdown (All Releases)
+          
+          $(gh api repos/conduit-design/conduit_design/releases --paginate --jq -r '
+            [.[] | .assets[] | {name, downloads: .download_count}] | 
+            group_by(.name) | 
+            map({
+              platform: .[0].name,
+              total: (map(.downloads) | add)
+            }) | 
+            sort_by(-.total) | 
+            .[] | 
+            "- **\(.platform):** \(.total) downloads"
+          ')
+          
+          EOF
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .github/download-stats/
+          
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Update download statistics [skip ci]"
+            git push
+          fi
